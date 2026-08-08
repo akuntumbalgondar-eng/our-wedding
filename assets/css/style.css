@@ -343,6 +343,82 @@ section{ padding:var(--space-5) var(--space-2); position:relative; }
 }
 
 /* =========================================================================
+   DRESS CODE
+   ========================================================================= */
+#dresscode{ background:#fff; }
+.dresscode-intro{
+  margin-top:var(--space-2);
+  font-size:0.9rem;
+  color:#5b6472;
+  max-width:440px;
+  margin-left:auto;
+  margin-right:auto;
+}
+
+.palette-strip{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:var(--space-3);
+  margin-top:var(--space-3);
+}
+.palette-swatch{ display:flex; flex-direction:column; align-items:center; gap:0.5em; width:76px; }
+.palette-swatch .chip{
+  width:52px;height:52px;
+  border-radius:50%;
+  border:1px solid rgba(0,0,0,0.08);
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,0.6), 0 2px 8px rgba(0,0,0,0.08);
+}
+.palette-swatch .chip-name{ font-size:0.68rem; letter-spacing:0.02em; color:#3d4453; text-align:center; line-height:1.25; }
+.palette-swatch .chip-hex{ font-size:0.6rem; color:#9aa0ab; text-transform:uppercase; }
+
+.dresscode-rules{
+  margin-top:var(--space-4);
+  display:flex;
+  flex-direction:column;
+  gap:var(--space-3);
+  text-align:left;
+}
+.rule-col{
+  background:var(--ivory);
+  border-radius:var(--radius-m);
+  padding:var(--space-3);
+  border-top:3px solid var(--gold);
+}
+.rule-col.rule-dont{ border-top-color:#b5716b; }
+.rule-col h3{
+  font-size:1.05rem;
+  margin-bottom:var(--space-1);
+}
+.rule-col.rule-do h3{ color:#5c7a56; }
+.rule-col.rule-dont h3{ color:#a45850; }
+.rule-col ul{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:0.6em; }
+.rule-col li{
+  font-size:0.87rem;
+  color:#3d4453;
+  padding-left:1.6em;
+  position:relative;
+  line-height:1.45;
+}
+.rule-do li::before{
+  content:'✓';
+  position:absolute; left:0; top:0;
+  color:#5c7a56;
+  font-weight:700;
+}
+.rule-dont li::before{
+  content:'✕';
+  position:absolute; left:0; top:0;
+  color:#a45850;
+  font-weight:700;
+}
+
+@media (min-width:640px){
+  .dresscode-rules{ flex-direction:row; }
+  .rule-col{ flex:1; }
+}
+
+/* =========================================================================
    RSVP
    ========================================================================= */
 #rsvp{ background:var(--navy-950); color:var(--ivory); }
