@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Wedding of Groom & Bride</title>
+<meta name="description" content="You're invited — join us as we celebrate our wedding day.">
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,500;0,600;1,500&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="locked">
+
+  <!-- ===================== COVER / ENVELOPE ===================== -->
+  <div id="cover">
+    <div class="envelope-scene">
+      <p class="eyebrow">You Are Invited</p>
+      <div class="envelope" id="envelope">
+        <div class="env-body"></div>
+        <div class="env-card"></div>
+        <div class="env-flap"></div>
+        <div class="env-seal" id="monogram">&amp;</div>
+      </div>
+      <p class="names" id="cover-names">Groom &amp; Bride</p>
+      <p class="guest-line">Dear <strong id="guest-name">Guest</strong>, please open your invitation</p>
+      <button class="btn-open" id="open-btn" type="button">Open Invitation</button>
+    </div>
+  </div>
+
+  <!-- ===================== HERO ===================== -->
+  <header id="hero">
+    <div class="hero-photo" id="hero-photo"></div>
+    <div class="hero-content fade-up">
+      <p class="eyebrow" id="hero-eyebrow">The Wedding Celebration Of</p>
+      <h1>
+        <span id="hero-groom">Groom</span>
+        <span class="amp">&amp;</span>
+        <span id="hero-bride">Bride</span>
+      </h1>
+      <p class="invite-line" id="hero-date">Wedding Date &amp; Time</p>
+    </div>
+  </header>
+
+  <!-- ===================== COUPLE ===================== -->
+  <section id="couple">
+    <div class="section-inner fade-up">
+      <p class="eyebrow">Bride &amp; Groom</p>
+      <div class="divider"><span class="diamond"></span></div>
+      <div class="couple-grid">
+        <div class="person-card">
+          <img id="groom-photo" src="assets/img/groom.jpg" alt="Groom">
+          <h3 id="groom-name">Groom Full Name</h3>
+          <p class="parents">Son of <span id="groom-parents">Father &amp; Mother</span></p>
+        </div>
+        <div class="amp-between">&amp;</div>
+        <div class="person-card">
+          <img id="bride-photo" src="assets/img/bride.jpg" alt="Bride">
+          <h3 id="bride-name">Bride Full Name</h3>
+          <p class="parents">Daughter of <span id="bride-parents">Father &amp; Mother</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COUNTDOWN ===================== -->
+  <section id="countdown">
+    <div class="section-inner fade-up">
+      <p class="eyebrow">Counting Down To The Big Day</p>
+      <h2>Save The Date</h2>
+      <div class="countdown-grid">
+        <div class="countdown-unit"><span class="num" id="cd-days">00</span><span class="label">Days</span></div>
+        <div class="countdown-unit"><span class="num" id="cd-hours">00</span><span class="label">Hours</span></div>
+        <div class="countdown-unit"><span class="num" id="cd-mins">00</span><span class="label">Minutes</span></div>
+        <div class="countdown-unit"><span class="num" id="cd-secs">00</span><span class="label">Seconds</span></div>
+      </div>
+      <a href="#" id="calendar-link" class="save-date-link" target="_blank" rel="noopener">+ Add to Google Calendar</a>
+    </div>
+  </section>
+
+  <!-- ===================== EVENT DETAILS ===================== -->
+  <section id="events">
+    <div class="section-inner fade-up">
+      <p class="eyebrow">Event Details</p>
+      <h2>When &amp; Where</h2>
+      <div id="events-list"></div>
+    </div>
+  </section>
+
+  <!-- ===================== MAP ===================== -->
+  <section id="map">
+    <div class="section-inner fade-up">
+      <p class="eyebrow">Venue</p>
+      <h2 id="venue-name">Venue Name</h2>
+      <p id="venue-address" style="margin-top:0.5em; color:#5b6472; font-size:0.9rem;">XXX</p>
+      <div class="map-frame-wrap">
+        <iframe id="map-embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+      </div>
+      <a href="#" id="maps-link" class="venue-link" target="_blank" rel="noopener">Open in Google Maps</a>
+    </div>
+  </section>
+
+  <!-- ===================== RSVP ===================== -->
+  <section id="rsvp">
+    <div class="section-inner fade-up">
+      <p class="eyebrow">Kindly Respond</p>
+      <h2>RSVP</h2>
+      <form class="rsvp-form" id="rsvp-form">
+        <div class="field">
+          <label for="rsvp-name">Full Name</label>
+          <input type="text" id="rsvp-name" name="name" required autocomplete="name" placeholder="Your full name">
+        </div>
+
+        <div class="field">
+          <label>Will you attend?</label>
+          <div class="attend-toggle">
+            <button type="button" class="attend-btn" data-value="Attending">Attending</button>
+            <button type="button" class="attend-btn" data-value="Not Attending">Not Attending</button>
+          </div>
+          <input type="hidden" id="rsvp-attendance" name="attendance" required>
+        </div>
+
+        <div class="field guest-count-wrap" id="guest-count-wrap">
+          <label for="rsvp-guests">Number of Guests</label>
+          <input type="number" id="rsvp-guests" name="guests" min="1" max="10" value="1">
+        </div>
+
+        <div class="field">
+          <label for="rsvp-message">Wishes &amp; Message</label>
+          <textarea id="rsvp-message" name="message" placeholder="Leave your wishes for the couple..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit" id="rsvp-submit">Send RSVP</button>
+        <p class="form-status" id="rsvp-status"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===================== WISHES ===================== -->
+  <section id="wishes">
+    <div class="section-inner fade-up">
+      <p class="eyebrow">Wishes For The Couple</p>
+      <h2>Guest Wishes</h2>
+      <div class="wishes-list" id="wishes-list">
+        <p class="wishes-empty">Be the first to send your wishes above 💌</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== GIFT ===================== -->
+  <section id="gift">
+    <div class="section-inner fade-up">
+      <p class="eyebrow">With Love</p>
+      <h2>Wanna give us some gifts?</h2>
+      <p style="margin-top:0.75em; font-size:0.9rem; color:var(--ivory-dim);">
+        Your presence is the greatest gift of all. But if you'd like to send a token of love, here are the details.
+      </p>
+      <div class="gift-card">
+        <div class="gift-row">
+          <div class="g-label">Bank Transfer</div>
+          <div class="copy-row">
+            <div class="g-value" id="gift-account">XXX Bank — 0000000000</div>
+            <button class="btn-copy" id="copy-account-btn" type="button">Copy</button>
+          </div>
+        </div>
+        <div class="gift-row">
+          <div class="g-label">Account Holder</div>
+          <div class="g-value" id="gift-holder">XXX</div>
+        </div>
+        <div class="gift-row">
+          <div class="g-label">Gift Delivery Address</div>
+          <div class="g-value" id="gift-address">XXX</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CLOSING ===================== -->
+  <section id="closing">
+    <div class="section-inner fade-up">
+      <p class="eyebrow">Thank You</p>
+      <h2 style="color:var(--ivory);">We Can't Wait To Celebrate With You</h2>
+      <p style="margin-top:0.75em; font-size:0.9rem;" id="closing-message">Closing message.</p>
+      <p class="signature" id="closing-names">Groom &amp; Bride</p>
+      <p class="fine-print">Made with love for our wedding day.</p>
+    </div>
+  </section>
+
+  <!-- Floating music control -->
+  <button id="music-toggle" type="button" aria-label="Toggle background music">
+    <svg class="icon-play" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+  </button>
+  <audio id="bg-music" loop preload="none"></audio>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
