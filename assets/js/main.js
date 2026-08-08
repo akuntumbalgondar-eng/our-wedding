@@ -12,7 +12,9 @@
      Guest name from URL, e.g. index.html?to=Ade%20Fitriyani
      --------------------------------------------------------------------- */
   const params = new URLSearchParams(window.location.search);
-  const guestName = params.get("to") ? decodeURIComponent(params.get("to")) : "Guest";
+  const guestName = params.get("to")
+    ? decodeURIComponent(params.get("to"))
+    : "Guest";
 
   /* ---------------------------------------------------------------------
      Populate static content from config
@@ -28,7 +30,10 @@
 
   text("guest-name", guestName);
   text("cover-names", `${cfg.groom.shortName} & ${cfg.bride.shortName}`);
-  text("monogram", `${cfg.groom.shortName.charAt(0)}${cfg.bride.shortName.charAt(0)}`);
+  text(
+    "monogram",
+    `${cfg.groom.shortName.charAt(0)}${cfg.bride.shortName.charAt(0)}`,
+  );
 
   text("hero-eyebrow", cfg.cover.eyebrow);
   text("hero-groom", cfg.groom.shortName);
@@ -74,9 +79,43 @@
         <h3>${ev.name}</h3>
         <div class="meta"><strong>${ev.date}</strong>${ev.time}</div>
         <div class="meta" style="margin-top:0.75em;"><strong>${ev.venueName}</strong>${ev.venueAddress}</div>
-      </div>`
+      </div>`,
       )
       .join("");
+  })();
+
+  /* ---------------------------------------------------------------------
+     Dress code: palette swatches + do/don't lists
+     --------------------------------------------------------------------- */
+  (function renderDresscode() {
+    const dc = cfg.dresscode;
+    if (!dc) return;
+
+    text("dresscode-intro", dc.intro);
+
+    const strip = document.getElementById("palette-strip");
+    if (strip && Array.isArray(dc.colors)) {
+      strip.innerHTML = dc.colors
+        .map(
+          (c) => `
+        <div class="palette-swatch">
+          <span class="chip" style="background:${c.value};"></span>
+          <span class="chip-name">${c.name}</span>
+          <span class="chip-hex">${c.value}</span>
+        </div>`,
+        )
+        .join("");
+    }
+
+    const dosList = document.getElementById("dresscode-dos");
+    if (dosList && Array.isArray(dc.dos)) {
+      dosList.innerHTML = dc.dos.map((item) => `<li>${item}</li>`).join("");
+    }
+
+    const dontsList = document.getElementById("dresscode-donts");
+    if (dontsList && Array.isArray(dc.donts)) {
+      dontsList.innerHTML = dc.donts.map((item) => `<li>${item}</li>`).join("");
+    }
   })();
 
   /* ---------------------------------------------------------------------
@@ -89,12 +128,14 @@
 
     if (cfg.venue.mapsShareUrl) {
       mapsUrl = cfg.venue.mapsShareUrl;
-      if (embed) embed.src = `https://www.google.com/maps?q=${encodeURIComponent(cfg.venue.address)}&output=embed`;
+      if (embed)
+        embed.src = `https://www.google.com/maps?q=${encodeURIComponent(cfg.venue.address)}&output=embed`;
     } else {
       const lat = cfg.venue.latitude;
       const lng = cfg.venue.longitude;
       mapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-      if (embed) embed.src = `https://www.google.com/maps?q=${lat},${lng}&z=16&output=embed`;
+      if (embed)
+        embed.src = `https://www.google.com/maps?q=${lat},${lng}&z=16&output=embed`;
     }
     if (link) link.href = mapsUrl;
   })();
@@ -112,7 +153,9 @@
     }
 
     const start = toGCalFormat(cfg.wedding.isoDateTime);
-    const end = toGCalFormat(cfg.wedding.endIsoDateTime || cfg.wedding.isoDateTime);
+    const end = toGCalFormat(
+      cfg.wedding.endIsoDateTime || cfg.wedding.isoDateTime,
+    );
     const url = new URL("https://calendar.google.com/calendar/render");
     url.searchParams.set("action", "TEMPLATE");
     url.searchParams.set("text", cfg.calendar.title);
@@ -180,11 +223,14 @@
         const audio = document.getElementById("bg-music");
         const musicBtn = document.getElementById("music-toggle");
         if (audio && audio.src) {
-          audio.play().then(() => {
-            if (musicBtn) musicBtn.classList.add("playing");
-          }).catch(() => {
-            /* Autoplay blocked — user can tap the floating button */
-          });
+          audio
+            .play()
+            .then(() => {
+              if (musicBtn) musicBtn.classList.add("playing");
+            })
+            .catch(() => {
+              /* Autoplay blocked — user can tap the floating button */
+            });
         }
       }, 600);
     });
@@ -208,7 +254,7 @@
           }
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0.15 },
     );
     items.forEach((el) => io.observe(el));
   })();
@@ -223,7 +269,10 @@
 
     btn.addEventListener("click", function () {
       if (audio.paused) {
-        audio.play().then(() => btn.classList.add("playing")).catch(() => {});
+        audio
+          .play()
+          .then(() => btn.classList.add("playing"))
+          .catch(() => {});
       } else {
         audio.pause();
         btn.classList.remove("playing");
@@ -274,7 +323,8 @@
       }
 
       if (!cfg.appsScriptUrl || cfg.appsScriptUrl === "XXX") {
-        status.textContent = "RSVP is not connected yet — see README.md Step 2.";
+        status.textContent =
+          "RSVP is not connected yet — see README.md Step 2.";
         status.className = "form-status error";
         return;
       }
@@ -282,7 +332,10 @@
       const payload = {
         name: document.getElementById("rsvp-name").value.trim(),
         attendance: attendance,
-        guests: attendance === "Attending" ? document.getElementById("rsvp-guests").value : "0",
+        guests:
+          attendance === "Attending"
+            ? document.getElementById("rsvp-guests").value
+            : "0",
         message: document.getElementById("rsvp-message").value.trim(),
       };
 
@@ -302,14 +355,19 @@
           status.textContent = "Thank you! Your RSVP has been received.";
           status.className = "form-status success";
           form.reset();
-          document.querySelectorAll(".attend-btn").forEach((b) => b.classList.remove("active"));
-          document.getElementById("guest-count-wrap").classList.remove("hidden");
+          document
+            .querySelectorAll(".attend-btn")
+            .forEach((b) => b.classList.remove("active"));
+          document
+            .getElementById("guest-count-wrap")
+            .classList.remove("hidden");
           fetchWishes(); // refresh immediately so the new wish shows up
         } else {
           throw new Error((data && data.message) || "Unknown error");
         }
       } catch (err) {
-        status.textContent = "Something went wrong. Please try again in a moment.";
+        status.textContent =
+          "Something went wrong. Please try again in a moment.";
         status.className = "form-status error";
       } finally {
         submitBtn.disabled = false;
@@ -332,7 +390,9 @@
     if (!cfg.appsScriptUrl || cfg.appsScriptUrl === "XXX") return;
 
     try {
-      const res = await fetch(`${cfg.appsScriptUrl}?action=wishes&t=${Date.now()}`);
+      const res = await fetch(
+        `${cfg.appsScriptUrl}?action=wishes&t=${Date.now()}`,
+      );
       const data = await res.json();
       if (!data || !Array.isArray(data.wishes)) return;
 
@@ -352,7 +412,7 @@
             <span class="wish-attend">${escapeHtml(w.attendance)}</span>
           </div>
           <p class="wish-msg">${escapeHtml(w.message)}</p>
-        </div>`
+        </div>`,
         )
         .join("");
     } catch (err) {

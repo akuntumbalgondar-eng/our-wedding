@@ -12,7 +12,7 @@ const WEDDING_CONFIG = {
     fullName: "SURYA PRANOWO",
     shortName: "SURYA", // shown in the countdown / hero
     fatherName: "Alm. NJOO TJOAN AN",
-    motherName: "Alm. Then Chui Kim",
+    motherName: "Alm. THEN CHUI KIM",
     instagram: "suryapranowo", // optional, e.g. "@groomhandle" — leave "" to hide
     photo: "assets/img/groom.jpg",
   },
@@ -73,6 +73,40 @@ const WEDDING_CONFIG = {
     mapsShareUrl: "https://share.google/uEVlBcDnGwcS7acJH",
   },
 
+  // ---- Dress code ---------------------------------------------------------
+  // "colors" is the palette you'd like guests to draw from — shown as
+  // tappable swatches with the color name underneath. Add/remove/reorder
+  // freely; each just needs a "name" and a hex "value".
+  dresscode: {
+    intro:
+      "Our Resepsi will be held at a Vihara. In respect for the space, we kindly ask guests to dress modestly and draw from the palette below.",
+    colors: [
+      { name: "Navy", value: "#14294a" },
+      { name: "Champagne Gold", value: "#c8a35f" },
+      { name: "Ivory", value: "#f7f2e7" },
+      { name: "Sage", value: "#8a9a7e" },
+      { name: "Dusty Rose", value: "#c9a3a0" },
+    ],
+
+    // Shown as a green "Do" checklist.
+    dos: [
+      "Cover shoulders and knees — sleeves or a light shawl work well",
+      "Choose soft, muted tones from the palette above",
+      "Wear shoes that are easy to slip on and off",
+      "Bring a light scarf in case a covering is needed inside the hall",
+      "Keep jewellery and accessories simple and understated",
+    ],
+
+    // Shown as a red "Don't" checklist.
+    donts: [
+      "Please avoid all-black outfits",
+      "No sleeveless tops, short skirts/shorts, or plunging necklines",
+      "Avoid loud prints, neon colors, or costume-like accessories",
+      "Avoid strong perfume or cologne inside the temple hall",
+      "Please keep phones on silent once inside the Vihara",
+    ],
+  },
+
   // ---- Calendar event description -----------------------------------------
   calendar: {
     title: "The Wedding of SURYA & FINA",
@@ -83,7 +117,8 @@ const WEDDING_CONFIG = {
   // Paste the Web App URL you get after deploying apps-script/Code.gs
   // (see README.md, Step 2). It looks like:
   // https://script.google.com/macros/s/XXXXXXXXXXXX/exec
-  appsScriptUrl: "https://script.google.com/macros/s/AKfycbxGnPtNxrpBBo9ZZydxnqettttUurvzT3EegBwcaPh4dMWCf_marR7dxFhuoByp-cSJSw/exec",
+  appsScriptUrl:
+    "https://script.google.com/macros/s/AKfycbxGnPtNxrpBBo9ZZydxnqettttUurvzT3EegBwcaPh4dMWCf_marR7dxFhuoByp-cSJSw/exec",
 
   // How often (ms) the wishes list checks for new messages
   wishesPollIntervalMs: 15000,
