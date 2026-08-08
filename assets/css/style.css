@@ -572,3 +572,11 @@ section{ padding:var(--space-5) var(--space-2); position:relative; }
   .couple-grid{ flex-direction:row; align-items:center; justify-content:center; }
   .person-card{ flex:1; }
 }
+
+.dresscode-visual {
+  margin-top: var(--space-4);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+}

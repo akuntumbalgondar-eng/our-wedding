@@ -90,11 +90,10 @@ const WEDDING_CONFIG = {
 
     // Shown as a green "Do" checklist.
     dos: [
-      "Cover shoulders and knees — sleeves or a light shawl work well",
+      "Cover shoulders and knees - sleeves or a light shawl work well",
       "Choose soft, muted tones from the palette above",
       "Wear shoes that are easy to slip on and off",
       "Bring a light scarf in case a covering is needed inside the hall",
-      "Keep jewellery and accessories simple and understated",
     ],
 
     // Shown as a red "Don't" checklist.
