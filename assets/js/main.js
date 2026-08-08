@@ -93,16 +93,33 @@
 
     text("dresscode-intro", dc.intro);
 
+    // const strip = document.getElementById("palette-strip");
+    // if (strip && Array.isArray(dc.colors)) {
+    //   strip.innerHTML = dc.colors
+    //     .map(
+    //       (c) => `
+    //     <div class="palette-swatch">
+    //       <span class="chip" style="background:${c.value};"></span>
+    //       <span class="chip-name">${c.name}</span>
+    //     </div>`,
+    //     )
+    //     .join("");
+    // }
     const strip = document.getElementById("palette-strip");
+
     if (strip && Array.isArray(dc.colors)) {
       strip.innerHTML = dc.colors
         .map(
           (c) => `
         <div class="palette-swatch">
-          <span class="chip" style="background:${c.value};"></span>
+          <span
+            class="fabric-chip"
+            style="background:${c.value};"
+            aria-hidden="true"
+          ></span>
           <span class="chip-name">${c.name}</span>
-          <span class="chip-hex">${c.value}</span>
-        </div>`,
+        </div>
+      `,
         )
         .join("");
     }

@@ -84,7 +84,6 @@ const WEDDING_CONFIG = {
       { name: "Navy", value: "#14294a" },
       { name: "Champagne Gold", value: "#c8a35f" },
       { name: "Ivory", value: "#f7f2e7" },
-      { name: "Sage", value: "#8a9a7e" },
       { name: "Dusty Rose", value: "#c9a3a0" },
     ],
 
