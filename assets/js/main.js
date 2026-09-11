@@ -427,9 +427,14 @@
       // with genuinely more content than the screen (long RSVP form,
       // wishes list, etc.) get the scroll-internally-first treatment.
       if (overflow <= 48) return true;
-      const atTop = page.scrollTop <= 4;
-      const atBottom =
-        page.scrollTop + page.clientHeight >= page.scrollHeight - 4;
+      /* const atTop = page.scrollTop <= 4;
+       const atBottom =
+         page.scrollTop + page.clientHeight >= page.scrollHeight - 4;
+      GEMINI */
+
+        const atTop = page.scrollTop <= 15;
+        const atBottom =
+          page.scrollTop + page.clientHeight >= page.scrollHeight - 15;
       return goingDown ? atBottom : atTop;
     }
 

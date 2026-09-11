@@ -27,7 +27,7 @@
 
   --sans: 'Jost', sans-serif;
   --gold-soft:#e3cf9d;
-  --script: 'Mrs Saint Delafield', cursive;
+  --script: 'Great Vibes', cursive;
 }
 
 *,*::before,*::after{box-sizing:border-box;}
@@ -639,7 +639,12 @@ body.locked #page-scroll{ overflow:hidden; }
 /* =========================================================================
    COUNTDOWN
    ========================================================================= */
-#countdown{ background:var(--navy-900); color:var(--ivory); }
+/* #countdown{ background:var(--navy-900); color:var(--ivory); } GEMINI*/
+#countdown { 
+  background:var(--navy-900); 
+  color:var(--ivory); 
+  overflow-y: hidden; 
+}
 #countdown h2{ color:var(--ivory); }
 .countdown-grid{
   display:grid;
