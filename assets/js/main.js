@@ -420,9 +420,16 @@
     // in the given direction — meaning a gesture should turn the page.
     function pageExhausted(goingDown) {
       const page = pages[activeIndex];
-      const atTop = page.scrollTop <= 1;
+      const overflow = page.scrollHeight - page.clientHeight;
+      // Small/rounding overflow (a few px from layout math on real
+      // phones) shouldn't force an extra swipe just to "finish"
+      // scrolling content that already visually fits — only pages
+      // with genuinely more content than the screen (long RSVP form,
+      // wishes list, etc.) get the scroll-internally-first treatment.
+      if (overflow <= 48) return true;
+      const atTop = page.scrollTop <= 4;
       const atBottom =
-        page.scrollTop + page.clientHeight >= page.scrollHeight - 1;
+        page.scrollTop + page.clientHeight >= page.scrollHeight - 4;
       return goingDown ? atBottom : atTop;
     }
 
@@ -432,13 +439,13 @@
       const pageIO = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+            if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
               const idx = pages.indexOf(entry.target);
               if (idx !== -1) setActive(idx);
             }
           });
         },
-        { root: scroller, threshold: [0.6] },
+        { root: scroller, threshold: [0.5] },
       );
       pages.forEach((p) => pageIO.observe(p));
     } else {
