@@ -74,8 +74,8 @@
     if (!wrap || !Array.isArray(cfg.events)) return;
     wrap.innerHTML = cfg.events
       .map(
-        (ev) => `
-      <div class="event-card">
+        (ev, i) => `
+      <div class="event-card reveal" data-reveal="up" style="--reveal-delay:${i * 130}ms">
         <h3>${ev.name}</h3>
         <div class="meta"><strong>${ev.date}</strong>${ev.time}</div>
         <div class="meta" style="margin-top:0.75em;"><strong>${ev.venueName}</strong>${ev.venueAddress}</div>
@@ -111,7 +111,7 @@
       strip.innerHTML = dc.colors
         .map(
           (c) => `
-        <div class="palette-swatch">
+        <div class="palette-swatch reveal" data-reveal="scale">
           <span
             class="fabric-chip"
             style="background:${c.value};"
@@ -126,12 +126,16 @@
 
     const dosList = document.getElementById("dresscode-dos");
     if (dosList && Array.isArray(dc.dos)) {
-      dosList.innerHTML = dc.dos.map((item) => `<li>${item}</li>`).join("");
+      dosList.innerHTML = dc.dos
+        .map((item) => `<li class="reveal" data-reveal="left">${item}</li>`)
+        .join("");
     }
 
     const dontsList = document.getElementById("dresscode-donts");
     if (dontsList && Array.isArray(dc.donts)) {
-      dontsList.innerHTML = dc.donts.map((item) => `<li>${item}</li>`).join("");
+      dontsList.innerHTML = dc.donts
+        .map((item) => `<li class="reveal" data-reveal="left">${item}</li>`)
+        .join("");
     }
   })();
 
@@ -236,6 +240,20 @@
       setTimeout(() => {
         cover.classList.add("opened");
         document.body.classList.remove("locked");
+
+        // Replay the hero's reveal animation right as the cover slides
+        // away, instead of it already sitting "visible" underneath.
+        const heroReveals = document.querySelectorAll(
+          "#hero .reveal, #hero.fade-up, #hero .fade-up",
+        );
+        heroReveals.forEach((el) => {
+          el.classList.remove("is-visible", "is-exit");
+        });
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            heroReveals.forEach((el) => el.classList.add("is-visible"));
+          });
+        });
         // Try to start music once the user has interacted with the page
         const audio = document.getElementById("bg-music");
         const musicBtn = document.getElementById("music-toggle");
@@ -254,26 +272,81 @@
   })();
 
   /* ---------------------------------------------------------------------
-     Fade-up reveal on scroll
+     Scroll reveal — smooth enter AND exit transitions.
+     Every ".fade-up" / ".reveal" element fades+lifts in as it enters the
+     viewport, and gently dims+lifts out again once it's scrolled past
+     above the fold — replaying cleanly if the user scrolls back up.
+     Reduced-motion users get everything shown instantly (see CSS).
      --------------------------------------------------------------------- */
-  (function revealOnScroll() {
-    const items = document.querySelectorAll(".fade-up");
+  const revealIO = (function scrollReveal() {
+    const selector = ".fade-up, .reveal";
+    const items = document.querySelectorAll(selector);
+
     if (!("IntersectionObserver" in window)) {
       items.forEach((el) => el.classList.add("is-visible"));
-      return;
+      return null;
     }
+
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
+          const el = entry.target;
           if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            io.unobserve(entry.target);
+            el.classList.add("is-visible");
+            el.classList.remove("is-exit");
+          } else if (
+            entry.boundingClientRect.bottom < 0 &&
+            el.classList.contains("is-visible")
+          ) {
+            // Fully scrolled past above the viewport (not just partially
+            // out) — only then apply the soft exit, so text never dims
+            // while any part of it is still on screen.
+            el.classList.add("is-exit");
           }
         });
       },
-      { threshold: 0.15 },
+      { threshold: [0, 0.12, 0.88, 1], rootMargin: "0px 0px 0px 0px" },
     );
+
     items.forEach((el) => io.observe(el));
+    return io;
+  })();
+
+  // Lets dynamically-rendered nodes (new wish cards, etc.) join the
+  // same reveal system after they're inserted into the DOM.
+  window.observeReveal = function (el) {
+    if (revealIO && el) revealIO.observe(el);
+  };
+
+  /* ---------------------------------------------------------------------
+     Subtle hero parallax — the cover photo drifts a touch slower than
+     the page as you scroll past it, for a bit of depth on mobile.
+     --------------------------------------------------------------------- */
+  (function heroParallax() {
+    const hero = document.getElementById("hero");
+    const photo = document.getElementById("hero-photo");
+    if (!hero || !photo) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let ticking = false;
+    function update() {
+      const rect = hero.getBoundingClientRect();
+      const raw = rect.top * -0.15;
+      const offset = Math.max(-60, Math.min(60, raw));
+      photo.style.transform = `translateY(${offset}px) scale(1.08)`;
+      ticking = false;
+    }
+    window.addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          window.requestAnimationFrame(update);
+          ticking = true;
+        }
+      },
+      { passive: true },
+    );
+    update();
   })();
 
   /* ---------------------------------------------------------------------
