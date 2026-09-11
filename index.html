@@ -36,12 +36,12 @@
   <!-- ===================== HERO ===================== -->
   <header id="hero">
     <div class="hero-photo" id="hero-photo"></div>
-    <div class="hero-content fade-up">
-      <div class="eyebrow">The Wedding Of</div>
-      <h1>
-        <span id="hero-groom">Groom</span>
-        <span class="amp">&amp;</span>
-        <span id="hero-bride">Bride</span>
+    <div class="hero-content">
+      <div class="eyebrow reveal" data-reveal="up">The Wedding Of</div>
+      <h1 class="reveal-stagger">
+        <span id="hero-groom" class="reveal" data-reveal="up">Groom</span>
+        <span class="amp reveal" data-reveal="scale">&amp;</span>
+        <span id="hero-bride" class="reveal" data-reveal="up">Bride</span>
       </h1>
       <!-- <p class="invite-line" id="hero-date">Wedding Date &amp; Time</p> -->
     </div>
@@ -52,14 +52,14 @@
     <div class="section-inner fade-up">
       <p class="eyebrow">Bride &amp; Groom</p>
       <div class="divider"><span class="diamond"></span></div>
-      <div class="couple-grid">
-        <div class="person-card">
+      <div class="couple-grid reveal-stagger">
+        <div class="person-card reveal" data-reveal="left">
           <img id="groom-photo" src="assets/img/groom.jpg" alt="Groom">
           <h3 id="groom-name">Groom Full Name</h3>
           <p class="parents">Son of <span id="groom-parents">Father &amp; Mother</span></p>
         </div>
-        <div class="amp-between">&amp;</div>
-        <div class="person-card">
+        <div class="amp-between reveal" data-reveal="scale">&amp;</div>
+        <div class="person-card reveal" data-reveal="right">
           <img id="bride-photo" src="assets/img/bride.jpg" alt="Bride">
           <h3 id="bride-name">Bride Full Name</h3>
           <p class="parents">Daughter of <span id="bride-parents">Father &amp; Mother</span></p>
@@ -73,11 +73,11 @@
     <div class="section-inner fade-up">
       <p class="eyebrow">Counting Down To The Big Day</p>
       <h2>Save The Date</h2>
-      <div class="countdown-grid">
-        <div class="countdown-unit"><span class="num" id="cd-days">00</span><span class="label">Days</span></div>
-        <div class="countdown-unit"><span class="num" id="cd-hours">00</span><span class="label">Hours</span></div>
-        <div class="countdown-unit"><span class="num" id="cd-mins">00</span><span class="label">Minutes</span></div>
-        <div class="countdown-unit"><span class="num" id="cd-secs">00</span><span class="label">Seconds</span></div>
+      <div class="countdown-grid reveal-stagger">
+        <div class="countdown-unit reveal" data-reveal="up"><span class="num" id="cd-days">00</span><span class="label">Days</span></div>
+        <div class="countdown-unit reveal" data-reveal="up"><span class="num" id="cd-hours">00</span><span class="label">Hours</span></div>
+        <div class="countdown-unit reveal" data-reveal="up"><span class="num" id="cd-mins">00</span><span class="label">Minutes</span></div>
+        <div class="countdown-unit reveal" data-reveal="up"><span class="num" id="cd-secs">00</span><span class="label">Seconds</span></div>
       </div>
       <a href="#" id="calendar-link" class="save-date-link" target="_blank" rel="noopener">+ Add to Google Calendar</a>
     </div>
@@ -98,7 +98,7 @@
       <p class="eyebrow">Venue</p>
       <h2 id="venue-name">Venue Name</h2>
       <p id="venue-address" style="margin-top:0.5em; color:#5b6472; font-size:0.9rem;">XXX</p>
-      <div class="map-frame-wrap">
+      <div class="map-frame-wrap reveal" data-reveal="scale">
         <iframe id="map-embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
       </div>
       <a href="#" id="maps-link" class="venue-link" target="_blank" rel="noopener">Open in Google Maps</a>
@@ -113,19 +113,19 @@
       <p class="dresscode-intro" id="dresscode-intro">XXX</p>
 
             <div class="dresscode-visual">
-        <div class="outfit-preview">
+        <div class="outfit-preview reveal" data-reveal="left">
           <img id="outfit-photo" src="assets/img/outfit.png" style="max-width: 130%;" alt="Dress code outfit inspiration">
         </div>
-        <div class="palette-panel">
+        <div class="palette-panel reveal" data-reveal="right">
           <p class="palette-title">Color Palette</p>
-          <div class="palette-strip" id="palette-strip"></div>
+          <div class="palette-strip reveal-stagger" id="palette-strip"></div>
         </div>
       </div>
 
       <div class="dresscode-rules">
-        <div class="rule-col rule-do">
+        <div class="rule-col rule-do reveal" data-reveal="up">
           <h3>Do</h3>
-          <ul id="dresscode-dos"></ul>
+          <ul class="reveal-stagger" id="dresscode-dos"></ul>
         </div>
         <!-- <div class="rule-col rule-dont">
           <h3>Don't</h3>
@@ -140,13 +140,13 @@
     <div class="section-inner fade-up">
       <p class="eyebrow">Kindly Respond</p>
       <h2>RSVP</h2>
-      <form class="rsvp-form" id="rsvp-form">
-        <div class="field">
+      <form class="rsvp-form reveal-stagger" id="rsvp-form">
+        <div class="field reveal" data-reveal="up">
           <label for="rsvp-name">Full Name</label>
           <input type="text" id="rsvp-name" name="name" required autocomplete="name" placeholder="Your full name">
         </div>
 
-        <div class="field">
+        <div class="field reveal" data-reveal="up">
           <label>Will you attend?</label>
           <div class="attend-toggle">
             <button type="button" class="attend-btn" data-value="Attending">Attending</button>
@@ -160,12 +160,12 @@
           <input type="hidden" id="rsvp-guests" name="guests" min="1" max="10" value="1">
         </div>
 
-        <div class="field">
+        <div class="field reveal" data-reveal="up">
           <label for="rsvp-message">Wishes &amp; Message</label>
           <textarea id="rsvp-message" name="message" placeholder="Leave your wishes for the couple..." required></textarea>
         </div>
 
-        <button type="submit" class="btn-submit" id="rsvp-submit">Send RSVP</button>
+        <button type="submit" class="btn-submit reveal" data-reveal="up" id="rsvp-submit">Send RSVP</button>
         <p class="form-status" id="rsvp-status"></p>
       </form>
     </div>
@@ -190,7 +190,7 @@
       <p style="margin-top:0.75em; font-size:0.9rem; color:var(--ivory-dim);">
         Your presence is the greatest gift of all. But if you'd like to send a token of love, here are the details.
       </p>
-      <div class="gift-card">
+      <div class="gift-card reveal" data-reveal="scale">
         <div class="gift-row">
           <div class="g-label">Bank Transfer</div>
           <div class="copy-row">
