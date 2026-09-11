@@ -32,16 +32,27 @@
   text("cover-names", `${cfg.groom.shortName} & ${cfg.bride.shortName}`);
   text(
     "monogram",
-    `${cfg.groom.shortName.charAt(0)}${cfg.bride.shortName.charAt(0)}`,
+    `${cfg.groom.shortName.charAt(0)} & ${cfg.bride.shortName.charAt(0)}`,
   );
 
-  text("hero-eyebrow", cfg.cover.eyebrow);
+  text("intro-eyebrow", cfg.cover.eyebrow);
+  text("intro-names", `${cfg.groom.shortName} & ${cfg.bride.shortName}`);
+
   text("hero-groom", cfg.groom.shortName);
   text("hero-bride", cfg.bride.shortName);
   text("hero-date", `${cfg.wedding.displayDate} · ${cfg.wedding.displayTime}`);
   if (cfg.cover.heroPhoto) {
     const hp = document.getElementById("hero-photo");
     if (hp) hp.style.backgroundImage = `url('${cfg.cover.heroPhoto}')`;
+    const ip = document.getElementById("intro-photo");
+    if (ip) {
+      ip.style.backgroundImage = `url('${cfg.cover.heroPhoto}')`;
+      ip.style.display = "block";
+    }
+    const cp = document.getElementById("cover-photo");
+    if (cp) cp.style.backgroundImage = `url('${cfg.cover.heroPhoto}')`;
+    const tp = document.getElementById("transition-photo");
+    if (tp) tp.style.backgroundImage = `url('${cfg.cover.heroPhoto}')`;
   }
 
   text("groom-name", cfg.groom.fullName);
@@ -65,6 +76,45 @@
     const audio = document.getElementById("bg-music");
     if (audio) audio.src = cfg.music.src;
   }
+
+  /* ---------------------------------------------------------------------
+     Intro sequence — two short beats ("The Wedding Of" -> the couple's
+     names) play once on load, then the overlay fades away to reveal
+     the cover underneath. Pure setTimeout choreography toggling
+     ".is-active" (fade handled by the CSS transition in style.css);
+     skipped entirely for reduced-motion, which jumps straight to the
+     cover.
+     --------------------------------------------------------------------- */
+  (function introSequence() {
+    const intro = document.getElementById("intro-sequence");
+    const step1 = document.getElementById("intro-step1");
+    const step2 = document.getElementById("intro-step2");
+    if (!intro) return;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      intro.style.display = "none";
+      return;
+    }
+
+    const HOLD = 2800; // how long each beat stays fully visible, in ms
+    const FADE = 1200; // matches .intro-step / #intro-sequence transition-duration
+
+    let t = 60; // small delay so the very first fade-in isn't an abrupt flash
+    setTimeout(() => step1 && step1.classList.add("is-active"), t);
+    t += HOLD;
+    setTimeout(() => step1 && step1.classList.remove("is-active"), t);
+    t += FADE * 0.4; // let step1 clear most of the way before step2 arrives
+    setTimeout(() => step2 && step2.classList.add("is-active"), t);
+    t += HOLD;
+    setTimeout(() => step2 && step2.classList.remove("is-active"), t);
+    t += FADE * 0.6;
+    setTimeout(() => {
+      intro.classList.add("done");
+      setTimeout(() => {
+        intro.style.display = "none";
+      }, FADE);
+    }, t);
+  })();
 
   /* ---------------------------------------------------------------------
      Event details list
@@ -227,22 +277,31 @@
   })();
 
   /* ---------------------------------------------------------------------
-     Envelope cover
+     Open Invitation — cover fades away behind a brief full-page photo
+     + shimmer transition, which then clears to reveal the hero.
      --------------------------------------------------------------------- */
-  (function envelope() {
+  (function openInvitation() {
     const cover = document.getElementById("cover");
-    const env = document.getElementById("envelope");
     const btn = document.getElementById("open-btn");
+    const transition = document.getElementById("page-transition");
     if (!cover || !btn) return;
 
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const SHIMMER_HOLD = reducedMotion ? 0 : 1050; // how long the shimmer overlay plays before revealing the hero
+    const SHIMMER_FADE = reducedMotion ? 0 : 500; // matches #page-transition's own opacity transition
+
     btn.addEventListener("click", function () {
-      env.classList.add("open");
+      cover.classList.add("opened");
+      if (transition) transition.classList.add("active");
+
       setTimeout(() => {
-        cover.classList.add("opened");
+        if (transition) transition.classList.add("fade-out");
         document.body.classList.remove("locked");
 
-        // Replay the hero's reveal animation right as the cover slides
-        // away, instead of it already sitting "visible" underneath.
+        // Replay the hero's reveal animation right as the transition
+        // clears, instead of it already sitting "visible" underneath.
         const heroReveals = document.querySelectorAll(
           "#hero .reveal, #hero.fade-up, #hero .fade-up",
         );
@@ -254,6 +313,7 @@
             heroReveals.forEach((el) => el.classList.add("is-visible"));
           });
         });
+
         // Try to start music once the user has interacted with the page
         const audio = document.getElementById("bg-music");
         const musicBtn = document.getElementById("music-toggle");
@@ -267,20 +327,31 @@
               /* Autoplay blocked — user can tap the floating button */
             });
         }
-      }, 600);
+
+        setTimeout(() => {
+          if (transition) transition.classList.remove("active", "fade-out");
+        }, SHIMMER_FADE);
+      }, SHIMMER_HOLD);
     });
   })();
 
   /* ---------------------------------------------------------------------
      Full-page "book" paging
-     - Native CSS scroll-snap (see style.css #page-scroll / .page) does
-       the actual snapping, so wheel/touch/trackpad all get the browser's
-       own smooth, GPU-friendly handling on every device — no JS wheel
-       hijacking, which is where "page scroll" implementations usually
-       get janky on mobile.
-     - This just (a) tags whichever page is on screen with ".is-current"
-       so the CSS cross-fade knows what to fade in/out, and (b) adds
-       keyboard paging as a nice-to-have on desktop.
+     - JS drives the actual page turn (wheel + touch), so one scroll
+       notch / one swipe reliably moves exactly one page on every
+       device — CSS scroll-snap alone can't guarantee that once a page
+       has its own scrollable content, so it's kept only as a native
+       fallback here, not the primary mechanism.
+     - If the current page is taller than the screen, a gesture first
+       scrolls *within* that page; only once it's scrolled all the way
+       to its edge does the next gesture turn the page. That's the
+       safety net for any content that doesn't fully fit a very short
+       screen — nothing becomes unreachable.
+     - Each page's fade/slide-in elements are explicitly replayed the
+       moment it becomes current, instead of relying on the scroll
+       position crossing a threshold naturally (which, with a fast
+       page-snap, was happening almost instantly and made the
+       animation barely visible).
      --------------------------------------------------------------------- */
   (function pageScroll() {
     const scroller = document.getElementById("page-scroll");
@@ -291,19 +362,13 @@
     );
     if (!pages.length) return;
 
-    if ("IntersectionObserver" in window) {
-      const pageIO = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            entry.target.classList.toggle("is-current", entry.isIntersecting);
-          });
-        },
-        { root: scroller, threshold: 0.55 },
-      );
-      pages.forEach((p) => pageIO.observe(p));
-    } else {
-      pages.forEach((p) => p.classList.add("is-current"));
-    }
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    let activeIndex = 0;
+    let isAnimating = false;
+    let lockTimer = null;
 
     function isTyping() {
       const a = document.activeElement;
@@ -317,20 +382,131 @@
       );
     }
 
-    function currentIndex() {
-      const mid = scroller.scrollTop + scroller.clientHeight / 2;
-      let idx = 0;
-      pages.forEach((p, i) => {
-        if (p.offsetTop <= mid) idx = i;
+    // Replay a page's own entrance elements right as it becomes current,
+    // so the fade/slide-in always plays fresh on arrival.
+    function replayReveals(page) {
+      if (reducedMotion) return;
+      const items = page.querySelectorAll(".reveal, .fade-up");
+      if (!items.length) return;
+      items.forEach((el) => el.classList.remove("is-visible", "is-exit"));
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          items.forEach((el) => el.classList.add("is-visible"));
+        });
       });
-      return idx;
+    }
+
+    function setActive(idx) {
+      if (idx === activeIndex && pages[idx].classList.contains("is-current"))
+        return;
+      activeIndex = idx;
+      pages.forEach((p, i) => p.classList.toggle("is-current", i === idx));
+      replayReveals(pages[idx]);
     }
 
     function goTo(idx) {
       idx = Math.max(0, Math.min(pages.length - 1, idx));
+      if (idx === activeIndex) return;
+      isAnimating = true;
       pages[idx].scrollIntoView({ behavior: "smooth", block: "start" });
+      setActive(idx);
+      clearTimeout(lockTimer);
+      lockTimer = setTimeout(() => {
+        isAnimating = false;
+      }, 850);
     }
 
+    // True once the active page has no more room to scroll internally
+    // in the given direction — meaning a gesture should turn the page.
+    function pageExhausted(goingDown) {
+      const page = pages[activeIndex];
+      const atTop = page.scrollTop <= 1;
+      const atBottom =
+        page.scrollTop + page.clientHeight >= page.scrollHeight - 1;
+      return goingDown ? atBottom : atTop;
+    }
+
+    // Keep activeIndex correct regardless of how the scroll happened
+    // (initial load, resize, browser back/forward, etc.)
+    if ("IntersectionObserver" in window) {
+      const pageIO = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting && entry.intersectionRatio > 0.6) {
+              const idx = pages.indexOf(entry.target);
+              if (idx !== -1) setActive(idx);
+            }
+          });
+        },
+        { root: scroller, threshold: [0.6] },
+      );
+      pages.forEach((p) => pageIO.observe(p));
+    } else {
+      pages.forEach((p) => p.classList.add("is-current"));
+    }
+
+    /* Wheel — one notch/gesture moves exactly one page */
+    scroller.addEventListener(
+      "wheel",
+      (e) => {
+        if (e.target.closest(".wishes-list")) return; // its own list scrolls freely
+        const goingDown = e.deltaY > 0;
+        if (!pageExhausted(goingDown)) return; // let the page scroll internally first
+
+        e.preventDefault();
+        if (document.body.classList.contains("locked")) return;
+        if (isAnimating || Math.abs(e.deltaY) < 4) return;
+        goTo(activeIndex + (goingDown ? 1 : -1));
+      },
+      { passive: false },
+    );
+
+    /* Touch swipe — one swipe moves exactly one page */
+    let touchStartY = null;
+    let touchLastY = null;
+
+    scroller.addEventListener(
+      "touchstart",
+      (e) => {
+        if (e.target.closest(".wishes-list, textarea, input, select")) {
+          touchStartY = null;
+          return;
+        }
+        touchStartY = touchLastY = e.touches[0].clientY;
+      },
+      { passive: true },
+    );
+
+    scroller.addEventListener(
+      "touchmove",
+      (e) => {
+        if (touchStartY === null) return;
+        const y = e.touches[0].clientY;
+        const goingDown = y < touchLastY; // finger moving up reveals content below
+        touchLastY = y;
+        if (!pageExhausted(goingDown)) return; // let the page scroll internally first
+        e.preventDefault(); // no more room inside the page — this gesture pages instead
+      },
+      { passive: false },
+    );
+
+    scroller.addEventListener(
+      "touchend",
+      (e) => {
+        if (touchStartY === null) return;
+        const delta = touchStartY - e.changedTouches[0].clientY;
+        touchStartY = null;
+        if (document.body.classList.contains("locked")) return;
+        if (isAnimating || Math.abs(delta) < 40) return;
+
+        const goingDown = delta > 0;
+        if (!pageExhausted(goingDown)) return; // was an internal scroll, not a page turn
+        goTo(activeIndex + (goingDown ? 1 : -1));
+      },
+      { passive: true },
+    );
+
+    /* Keyboard */
     window.addEventListener("keydown", (e) => {
       if (isTyping()) return;
       if (document.body.classList.contains("locked")) return;
@@ -340,12 +516,12 @@
         case "PageDown":
         case " ":
           e.preventDefault();
-          goTo(currentIndex() + 1);
+          goTo(activeIndex + 1);
           break;
         case "ArrowUp":
         case "PageUp":
           e.preventDefault();
-          goTo(currentIndex() - 1);
+          goTo(activeIndex - 1);
           break;
         case "Home":
           e.preventDefault();

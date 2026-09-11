@@ -10,7 +10,7 @@ const WEDDING_CONFIG = {
   // ---- Couple -------------------------------------------------------------
   groom: {
     fullName: "SURYA PRANOWO",
-    shortName: "SURYA", // shown in the countdown / hero
+    shortName: "Surya", // shown in the countdown / hero
     fatherName: "Alm. NJOO TJOAN AN",
     motherName: "Alm. THEN CHUI KIM",
     instagram: "suryapranowo", // optional, e.g. "@groomhandle" — leave "" to hide
@@ -18,7 +18,7 @@ const WEDDING_CONFIG = {
   },
   bride: {
     fullName: "DHELFINA ATHALIA",
-    shortName: "FINA",
+    shortName: "Fina", // shown in the countdown / hero
     fatherName: "Alm. OENTOENG IMA SANTOSO",
     motherName: "NG SULAN",
     instagram: "dhelfinaa", // optional, e.g. "@bridehandle" — leave "" to hide
@@ -28,7 +28,7 @@ const WEDDING_CONFIG = {
   // ---- Hero / cover ---------------------------------------------------
   cover: {
     heroPhoto: "assets/img/cover.jpg", // full-bleed cover photo
-    eyebrow: "The Wedding Celebration Of",
+    eyebrow: "The Wedding Of",
   },
 
   // ---- Date & time ------------------------------------------------------

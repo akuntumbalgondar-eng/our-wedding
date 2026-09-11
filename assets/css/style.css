@@ -132,6 +132,7 @@ section{ padding:var(--space-5) var(--space-2); position:relative; }
 .ornate-frame::after{ bottom:-7px; right:-7px; border-left:none; border-top:none; }
 
 /* Faint dot-grid texture for flat dark-navy sections */
+#intro-sequence::before,
 #cover::before,
 #countdown::before,
 #rsvp::before,
@@ -268,17 +269,20 @@ section{ padding:var(--space-5) var(--space-2); position:relative; }
 /* =========================================================================
    PAGE SCROLL — full-page "book" paging
    -------------------------------------------------------------------------
-   #page-scroll is the single scrollable region (native CSS scroll-snap,
-   not JS wheel-hijacking, so touchpads/touchscreens/mouse wheels all get
-   the browser's own smooth, battery-friendly momentum handling on every
-   device). Each direct header/section — every ".page" — is one full
-   screen ("page") that snaps into place. A page taller than the screen
-   (long RSVP form, wishes list, etc.) just becomes its own little
-   scroll area via overflow-y, so nothing gets clipped on short phones —
-   you scroll through it, then paging continues to the next section.
-   A soft opacity cross-fade (".is-current", driven from main.js) plays
-   under the hard snap so the transition reads as a gentle fade between
-   pages rather than a flat cut.
+   #page-scroll is the scrollable region. The actual "one swipe/scroll =
+   one page" behaviour is driven from main.js (wheel + touch, with a
+   short lock during the transition) because relying on CSS scroll-snap
+   alone doesn't reliably guarantee a single notch/swipe lands exactly
+   one page over on every browser — CSS snap is kept here as a native
+   fallback/reinforcement, not the primary mechanism.
+   Each ".page" gets a fluid spacing scale (via dvh-based clamp()) so
+   paddings/gaps shrink on short phone screens automatically — the goal
+   is that content simply fits one screen rather than needing to be
+   clipped or internally scrolled. `overflow-y:auto` stays as a safety
+   net for the rare case a page still doesn't fit (e.g. very short
+   screen + large accessibility text): main.js checks that scroll
+   position before deciding whether a gesture should turn the page or
+   scroll within it.
    ========================================================================= */
 #page-scroll{
   height:100vh;
@@ -298,17 +302,22 @@ body.locked #page-scroll{ overflow:hidden; }
   scroll-snap-align:start;
   scroll-snap-stop:always;
   overflow-y:auto;
-  overscroll-behavior-y:contain;
-  opacity:0.4;
-  transition:opacity 0.7s var(--ease);
-  will-change:opacity;
+  -webkit-overflow-scrolling:touch;
+
+  /* Fluid spacing scale for full-page mode — shrinks on short screens
+     (dvh-based) so a page's own content tends to fit one screen.
+     Every existing rule using var(--space-*) picks this up for free. */
+  --space-1:clamp(0.35rem, 1.2dvh, 0.5rem);
+  --space-2:clamp(0.6rem, 2.2dvh, 1rem);
+  --space-3:clamp(1rem, 3.2dvh, 1.75rem);
+  --space-4:clamp(1.25rem, 4.5dvh, 3rem);
+  --space-5:clamp(1.5rem, 6dvh, 5rem);
 }
-.page.is-current{ opacity:1; }
 
 /* Vertically center each page's content — except the hero, which keeps
-   its own bottom-aligned photo layout defined below. `safe center`
-   is a progressive enhancement: if a page's content is ever taller
-   than the screen, it falls back to starting at the top instead of
+   its own bottom-aligned photo layout defined below. `safe center` is
+   a progressive enhancement: if a page's content is ever taller than
+   the screen, it falls back to starting at the top instead of
    clipping, so nothing becomes unreachable on small devices. */
 .page:not(#hero){
   display:flex;
@@ -325,11 +334,85 @@ body.locked #page-scroll{ overflow:hidden; }
 
 @media (prefers-reduced-motion: reduce){
   #page-scroll{ scroll-snap-type:none; }
-  .page{ opacity:1; transition:none; }
 }
 
 /* =========================================================================
-   COVER / ENVELOPE (signature element)
+   INTRO SEQUENCE — plays once on load, before the cover
+   -------------------------------------------------------------------------
+   Two short full-screen beats — "The Wedding Of", then the couple's
+   names (with an optional small photo) — cross-fade in and hold, then
+   the whole overlay fades away to reveal #cover underneath, like a
+   curtain lifting. Timing is orchestrated from main.js (introSequence);
+   the CSS here only defines the fade/lift transition itself.
+   ========================================================================= */
+#intro-sequence{
+  position:fixed;
+  inset:0;
+  z-index:110;
+  background:var(--navy-950);
+  overflow:hidden;
+  transition:opacity 1.2s var(--ease);
+}
+#intro-sequence.done{
+  opacity:0;
+  pointer-events:none;
+}
+
+.intro-step{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:var(--space-3);
+  padding:var(--space-4);
+  text-align:center;
+  opacity:0;
+  transform:translateY(16px) scale(0.98);
+  transition:opacity 1.2s var(--ease), transform 1.2s var(--ease);
+}
+.intro-step.is-active{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+
+.intro-eyebrow{
+  font-family:var(--font-body);
+  letter-spacing:0.32em;
+  text-transform:uppercase;
+  font-size:0.8rem;
+  color:var(--gold-light);
+}
+
+.intro-photo{
+  display:none; /* JS reveals this only if a photo is configured */
+  width:clamp(72px, 18dvh, 96px);
+  height:clamp(72px, 18dvh, 96px);
+  border-radius:50%;
+  background-size:cover;
+  background-position:center;
+  border:1px solid rgba(200,163,95,0.45);
+  box-shadow:0 12px 30px -12px rgba(0,0,0,0.5);
+}
+
+.intro-names{
+  font-family:var(--script);
+  font-size:clamp(2.4rem, 11vw, 3.6rem);
+  color:var(--ivory);
+  line-height:1.15;
+}
+
+@media (prefers-reduced-motion: reduce){
+  #intro-sequence{ display:none; }
+}
+
+/* =========================================================================
+   COVER (signature element)
+   -------------------------------------------------------------------------
+   Full-bleed photo at low opacity behind the text, instead of the old
+   envelope graphic — quieter, more photo-led, same navy/gold mood as
+   the rest of the site.
    ========================================================================= */
 #cover{
   position:fixed;
@@ -339,6 +422,7 @@ body.locked #page-scroll{ overflow:hidden; }
   display:flex;
   align-items:center;
   justify-content:center;
+  overflow:hidden;
   transition:transform 1s var(--ease), opacity 1s var(--ease);
 }
 #cover.opened{
@@ -347,7 +431,19 @@ body.locked #page-scroll{ overflow:hidden; }
   pointer-events:none;
 }
 
-.envelope-scene{
+.cover-photo{
+  position:absolute; inset:0;
+  background-size:cover;
+  background-position:center;
+  opacity:0.22;
+}
+.cover-photo::after{
+  content:'';
+  position:absolute; inset:0;
+  background:radial-gradient(120% 90% at 50% 40%, rgba(7,15,31,0.35) 0%, rgba(7,15,31,0.88) 100%);
+}
+
+.cover-content{
   position:relative;
   z-index:1;
   width:min(320px, 82vw);
@@ -355,68 +451,26 @@ body.locked #page-scroll{ overflow:hidden; }
   text-align:center;
 }
 
-.envelope{
-  position:relative;
-  width:100%;
-  aspect-ratio:3/2;
-  margin:0 auto var(--space-4);
+.cover-monogram{
+  font-family:var(--script);
+  font-size:clamp(2.6rem, 12vw, 3.6rem);
+  color:var(--gold-light);
+  opacity:0.9;
+  line-height:1;
+  margin-bottom:var(--space-2);
 }
-.env-body{
-  position:absolute; inset:0;
-  background:var(--navy-800);
-  border:1px solid rgba(200,163,95,0.35);
-  border-radius:var(--radius-s);
-}
-.env-flap{
-  position:absolute;
-  top:0; left:0; right:0;
-  height:52%;
-  background:var(--navy-700);
-  clip-path:polygon(0 0, 100% 0, 50% 100%);
-  transform-origin:top center;
-  transition:transform 0.9s var(--ease);
-  border-bottom:1px solid rgba(200,163,95,0.35);
-}
-.envelope.open .env-flap{ transform:rotateX(180deg); }
-.env-seal{
-  position:absolute;
-  top:32%; left:50%;
-  transform:translate(-50%,-50%);
-  width:44px;height:44px;
-  border-radius:50%;
-  background:var(--gold);
-  display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);
-  font-size:0.85rem;
-  color:var(--navy-950);
-  box-shadow:0 4px 14px rgba(0,0,0,0.35);
-  z-index:2;
-  transition:opacity 0.4s ease;
-}
-.envelope.open .env-seal{ opacity:0; }
-.env-card{
-  position:absolute;
-  left:8%; right:8%;
-  bottom:6%;
-  height:0;
-  background:var(--ivory);
-  border-radius:2px;
-  transition:height 0.7s var(--ease) 0.3s, bottom 0.7s var(--ease) 0.3s;
-  z-index:1;
-}
-.envelope.open .env-card{ height:78%; bottom:14%; }
 
-.envelope-scene .names{
+.cover-content .names{
   font-family:var(--font-display);
   font-size:1.6rem;
   margin-top:var(--space-2);
 }
-.envelope-scene .guest-line{
+.cover-content .guest-line{
   margin-top:var(--space-2);
   font-size:0.85rem;
   color:var(--ivory-dim);
 }
-.envelope-scene .guest-line strong{ color:var(--gold-light); }
+.cover-content .guest-line strong{ color:var(--gold-light); }
 
 .btn-open{
   margin-top:var(--space-3);
@@ -433,6 +487,66 @@ body.locked #page-scroll{ overflow:hidden; }
   transition:background 0.3s ease, color 0.3s ease;
 }
 .btn-open:hover{ background:var(--gold); color:var(--navy-950); }
+
+/* =========================================================================
+   PAGE TRANSITION — plays once, right after "Open Invitation" is tapped
+   -------------------------------------------------------------------------
+   A full-bleed photo at low opacity with a single soft diagonal shimmer
+   sweeping across it, then fades away to reveal the hero underneath.
+   Toggled from main.js (openInvitation): .active shows it, .fade-out
+   clears it a moment later. Purely decorative — aria-hidden, no content.
+   ========================================================================= */
+#page-transition{
+  position:fixed;
+  inset:0;
+  z-index:120;
+  background:var(--navy-950);
+  overflow:hidden;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 0.5s var(--ease);
+}
+#page-transition.active{ opacity:1; }
+#page-transition.active.fade-out{ opacity:0; }
+
+.transition-photo{
+  position:absolute; inset:0;
+  background-size:cover;
+  background-position:center;
+  opacity:0.24;
+}
+.transition-photo::after{
+  content:'';
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(7,15,31,0.5) 0%, rgba(7,15,31,0.88) 100%);
+}
+
+.transition-shimmer{
+  position:absolute;
+  top:-30%; left:-60%;
+  width:55%; height:160%;
+  background:linear-gradient(115deg,
+    transparent 0%,
+    rgba(230,207,156,0) 38%,
+    rgba(230,207,156,0.5) 50%,
+    rgba(230,207,156,0) 62%,
+    transparent 100%);
+  opacity:0;
+}
+#page-transition.active .transition-shimmer{
+  animation:shimmerSweep 1.3s ease-in-out;
+}
+@keyframes shimmerSweep{
+  0%{ transform:translateX(-30%); opacity:0; }
+  18%{ opacity:1; }
+  60%{ opacity:1; }
+  100%{ transform:translateX(260%); opacity:0; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  #page-transition{ transition:none; }
+  #page-transition.active .transition-shimmer{ animation:none; }
+}
 
 /* =========================================================================
    HERO
@@ -504,7 +618,8 @@ body.locked #page-scroll{ overflow:hidden; }
   margin-top:var(--space-3);
 }
 .person-card img{
-  width:150px;height:150px;
+  width:clamp(84px, 20dvh, 150px);
+  height:clamp(84px, 20dvh, 150px);
   object-fit:cover;
   border-radius:50%;
   margin:0 auto var(--space-2);
@@ -623,7 +738,7 @@ body.locked #page-scroll{ overflow:hidden; }
 }
 
 .outfit-preview{
-  min-height:360px;
+  min-height:clamp(160px, 34dvh, 360px);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -633,7 +748,7 @@ body.locked #page-scroll{ overflow:hidden; }
 .outfit-preview img{
   width:100%;
   max-width:280px;
-  max-height:430px;
+  max-height:clamp(200px, 40dvh, 430px);
   object-fit:contain;
   margin:0 auto;
 }
@@ -722,12 +837,12 @@ body.locked #page-scroll{ overflow:hidden; }
   }
 
   .outfit-preview{
-    min-height:320px;
+    min-height:clamp(140px, 30dvh, 320px);
   }
 
   .outfit-preview img{
     max-width:190px;
-    max-height:390px;
+    max-height:clamp(180px, 36dvh, 390px);
   }
 
   .palette-strip{

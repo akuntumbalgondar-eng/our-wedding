@@ -17,23 +17,39 @@
 </head>
 <body class="locked">
 
-  <!-- ===================== COVER / ENVELOPE ===================== -->
-  <div id="cover">
+  <!-- ===================== INTRO SEQUENCE ===================== -->
+  <div id="intro-sequence">
     <div class="ambient-sparkles" aria-hidden="true">
       <span></span><span></span><span></span><span></span><span></span><span></span>
     </div>
-    <div class="envelope-scene">
+    <div class="intro-step" id="intro-step1">
+      <p class="intro-eyebrow" id="intro-eyebrow">The Wedding Of</p>
+    </div>
+    <div class="intro-step" id="intro-step2">
+      <div class="intro-photo" id="intro-photo"></div>
+      <p class="intro-names" id="intro-names">Groom &amp; Bride</p>
+    </div>
+  </div>
+
+  <!-- ===================== COVER ===================== -->
+  <div id="cover">
+    <div class="cover-photo" id="cover-photo"></div>
+    <div class="ambient-sparkles" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <div class="cover-content">
+      <p class="cover-monogram" id="monogram">S&amp;F</p>
       <p class="eyebrow">You Are Invited</p>
-      <div class="envelope" id="envelope">
-        <div class="env-body"></div>
-        <div class="env-card"></div>
-        <div class="env-flap"></div>
-        <div class="env-seal" id="monogram">&amp;</div>
-      </div>
       <p class="names" id="cover-names">Groom &amp; Bride</p>
       <p class="guest-line">Dear <strong id="guest-name">Guest</strong>, please open your invitation</p>
       <button class="btn-open" id="open-btn" type="button">Open Invitation</button>
     </div>
+  </div>
+
+  <!-- ===================== PAGE TRANSITION (plays once, after "Open Invitation") ===================== -->
+  <div id="page-transition" aria-hidden="true">
+    <div class="transition-photo" id="transition-photo"></div>
+    <div class="transition-shimmer"></div>
   </div>
 
   <!-- ===================== PAGE SCROLL (full-page snap container) ===================== -->
