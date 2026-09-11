@@ -19,6 +19,9 @@
 
   <!-- ===================== COVER / ENVELOPE ===================== -->
   <div id="cover">
+    <div class="ambient-sparkles" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
     <div class="envelope-scene">
       <p class="eyebrow">You Are Invited</p>
       <div class="envelope" id="envelope">
@@ -33,9 +36,15 @@
     </div>
   </div>
 
+  <!-- ===================== PAGE SCROLL (full-page snap container) ===================== -->
+  <main id="page-scroll">
+
   <!-- ===================== HERO ===================== -->
-  <header id="hero">
+  <header id="hero" class="page">
     <div class="hero-photo" id="hero-photo"></div>
+    <div class="ambient-sparkles" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
     <div class="hero-content">
       <div class="eyebrow reveal" data-reveal="up">The Wedding Of</div>
       <h1 class="reveal-stagger">
@@ -48,7 +57,7 @@
   </header>
 
   <!-- ===================== COUPLE ===================== -->
-  <section id="couple">
+  <section id="couple" class="page">
     <div class="section-inner fade-up">
       <p class="eyebrow">Bride &amp; Groom</p>
       <div class="divider"><span class="diamond"></span></div>
@@ -69,7 +78,7 @@
   </section>
 
   <!-- ===================== COUNTDOWN ===================== -->
-  <section id="countdown">
+  <section id="countdown" class="page">
     <div class="section-inner fade-up">
       <p class="eyebrow">Counting Down To The Big Day</p>
       <h2>Save The Date</h2>
@@ -84,7 +93,7 @@
   </section>
 
   <!-- ===================== EVENT DETAILS ===================== -->
-  <section id="events">
+  <section id="events" class="page">
     <div class="section-inner fade-up">
       <p class="eyebrow">Event Details</p>
       <h2>When &amp; Where</h2>
@@ -93,7 +102,7 @@
   </section>
 
   <!-- ===================== MAP ===================== -->
-  <section id="map">
+  <section id="map" class="page">
     <div class="section-inner fade-up">
       <p class="eyebrow">Venue</p>
       <h2 id="venue-name">Venue Name</h2>
@@ -106,7 +115,7 @@
   </section>
 
   <!-- ===================== DRESS CODE ===================== -->
-  <section id="dresscode">
+  <section id="dresscode" class="page">
     <div class="section-inner fade-up">
       <p class="eyebrow">Dress Code</p>
       <h2>What To Wear</h2>
@@ -136,7 +145,7 @@
   </section>
 
   <!-- ===================== RSVP ===================== -->
-  <section id="rsvp">
+  <section id="rsvp" class="page">
     <div class="section-inner fade-up">
       <p class="eyebrow">Kindly Respond</p>
       <h2>RSVP</h2>
@@ -172,7 +181,7 @@
   </section>
 
   <!-- ===================== WISHES ===================== -->
-  <section id="wishes">
+  <section id="wishes" class="page">
     <div class="section-inner fade-up">
       <p class="eyebrow">Wishes For The Couple</p>
       <h2>Guest Wishes</h2>
@@ -183,14 +192,14 @@
   </section>
 
   <!-- ===================== GIFT ===================== -->
-  <section id="gift">
+  <section id="gift" class="page">
     <div class="section-inner fade-up">
       <p class="eyebrow">With Love</p>
       <h2>Wanna give us some gifts?</h2>
       <p style="margin-top:0.75em; font-size:0.9rem; color:var(--ivory-dim);">
         Your presence is the greatest gift of all. But if you'd like to send a token of love, here are the details.
       </p>
-      <div class="gift-card reveal" data-reveal="scale">
+      <div class="gift-card ornate-frame reveal" data-reveal="scale">
         <div class="gift-row">
           <div class="g-label">Bank Transfer</div>
           <div class="copy-row">
@@ -211,7 +220,7 @@
   </section>
 
   <!-- ===================== CLOSING ===================== -->
-  <section id="closing">
+  <section id="closing" class="page">
     <div class="section-inner fade-up">
       <p class="eyebrow">Thank You</p>
       <h2 style="color:var(--ivory);">We Can't Wait To Celebrate With You</h2>
@@ -220,6 +229,9 @@
       <p class="fine-print">Made with love for our wedding day.</p>
     </div>
   </section>
+
+  </main>
+  <!-- ===================== /PAGE SCROLL ===================== -->
 
   <!-- Floating music control -->
   <button id="music-toggle" type="button" aria-label="Toggle background music">

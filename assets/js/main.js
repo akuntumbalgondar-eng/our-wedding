@@ -75,7 +75,7 @@
     wrap.innerHTML = cfg.events
       .map(
         (ev, i) => `
-      <div class="event-card reveal" data-reveal="up" style="--reveal-delay:${i * 130}ms">
+      <div class="event-card ornate-frame reveal" data-reveal="up" style="--reveal-delay:${i * 150}ms">
         <h3>${ev.name}</h3>
         <div class="meta"><strong>${ev.date}</strong>${ev.time}</div>
         <div class="meta" style="margin-top:0.75em;"><strong>${ev.venueName}</strong>${ev.venueAddress}</div>
@@ -272,6 +272,94 @@
   })();
 
   /* ---------------------------------------------------------------------
+     Full-page "book" paging
+     - Native CSS scroll-snap (see style.css #page-scroll / .page) does
+       the actual snapping, so wheel/touch/trackpad all get the browser's
+       own smooth, GPU-friendly handling on every device — no JS wheel
+       hijacking, which is where "page scroll" implementations usually
+       get janky on mobile.
+     - This just (a) tags whichever page is on screen with ".is-current"
+       so the CSS cross-fade knows what to fade in/out, and (b) adds
+       keyboard paging as a nice-to-have on desktop.
+     --------------------------------------------------------------------- */
+  (function pageScroll() {
+    const scroller = document.getElementById("page-scroll");
+    if (!scroller) return;
+
+    const pages = Array.from(scroller.children).filter(
+      (el) => el.tagName === "HEADER" || el.tagName === "SECTION",
+    );
+    if (!pages.length) return;
+
+    if ("IntersectionObserver" in window) {
+      const pageIO = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            entry.target.classList.toggle("is-current", entry.isIntersecting);
+          });
+        },
+        { root: scroller, threshold: 0.55 },
+      );
+      pages.forEach((p) => pageIO.observe(p));
+    } else {
+      pages.forEach((p) => p.classList.add("is-current"));
+    }
+
+    function isTyping() {
+      const a = document.activeElement;
+      if (!a) return false;
+      const tag = a.tagName;
+      return (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        tag === "SELECT" ||
+        a.isContentEditable
+      );
+    }
+
+    function currentIndex() {
+      const mid = scroller.scrollTop + scroller.clientHeight / 2;
+      let idx = 0;
+      pages.forEach((p, i) => {
+        if (p.offsetTop <= mid) idx = i;
+      });
+      return idx;
+    }
+
+    function goTo(idx) {
+      idx = Math.max(0, Math.min(pages.length - 1, idx));
+      pages[idx].scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    window.addEventListener("keydown", (e) => {
+      if (isTyping()) return;
+      if (document.body.classList.contains("locked")) return;
+
+      switch (e.key) {
+        case "ArrowDown":
+        case "PageDown":
+        case " ":
+          e.preventDefault();
+          goTo(currentIndex() + 1);
+          break;
+        case "ArrowUp":
+        case "PageUp":
+          e.preventDefault();
+          goTo(currentIndex() - 1);
+          break;
+        case "Home":
+          e.preventDefault();
+          goTo(0);
+          break;
+        case "End":
+          e.preventDefault();
+          goTo(pages.length - 1);
+          break;
+      }
+    });
+  })();
+
+  /* ---------------------------------------------------------------------
      Scroll reveal — smooth enter AND exit transitions.
      Every ".fade-up" / ".reveal" element fades+lifts in as it enters the
      viewport, and gently dims+lifts out again once it's scrolled past
@@ -325,6 +413,10 @@
   (function heroParallax() {
     const hero = document.getElementById("hero");
     const photo = document.getElementById("hero-photo");
+    // Hero now lives inside #page-scroll, which is the element that
+    // actually scrolls (the document/window no longer does), so the
+    // scroll listener has to sit on that container instead of window.
+    const scrollSource = document.getElementById("page-scroll") || window;
     if (!hero || !photo) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
@@ -336,7 +428,7 @@
       photo.style.transform = `translateY(${offset}px) scale(1.08)`;
       ticking = false;
     }
-    window.addEventListener(
+    scrollSource.addEventListener(
       "scroll",
       () => {
         if (!ticking) {
