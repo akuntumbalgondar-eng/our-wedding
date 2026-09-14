@@ -639,11 +639,9 @@ body.locked #page-scroll{ overflow:hidden; }
 /* =========================================================================
    COUNTDOWN
    ========================================================================= */
-/* #countdown{ background:var(--navy-900); color:var(--ivory); } GEMINI*/
-#countdown { 
-  background:var(--navy-900); 
-  color:var(--ivory); 
-  overflow-y: hidden; 
+#countdown {
+  background:var(--navy-900);
+  color:var(--ivory);
 }
 #countdown h2{ color:var(--ivory); }
 .countdown-grid{
