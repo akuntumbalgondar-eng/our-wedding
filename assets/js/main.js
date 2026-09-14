@@ -416,16 +416,25 @@
       }, 850);
     }
 
+    // Only these pages are allowed to have more content than one
+    // screen (a growing wishes list, a long form) — everything else
+    // is designed to always fit one viewport, so it should page on
+    // the very first gesture. We deliberately do NOT rely on live
+    // scrollHeight/clientHeight measurements for those "fits one
+    // screen" pages: on Android, the browser's address bar
+    // collapsing/expanding mid-gesture shifts clientHeight by tens of
+    // pixels, which made borderline pages (e.g. Countdown) randomly
+    // report "still has room to scroll" even though nothing was
+    // actually scrollable — swipes got silently swallowed.
+    const INTERNAL_SCROLL_IDS = new Set(["rsvp", "wishes"]);
+
     // True once the active page has no more room to scroll internally
     // in the given direction — meaning a gesture should turn the page.
     function pageExhausted(goingDown) {
       const page = pages[activeIndex];
+      if (!INTERNAL_SCROLL_IDS.has(page.id)) return true;
+
       const overflow = page.scrollHeight - page.clientHeight;
-      // Small/rounding overflow (a few px from layout math on real
-      // phones) shouldn't force an extra swipe just to "finish"
-      // scrolling content that already visually fits — only pages
-      // with genuinely more content than the screen (long RSVP form,
-      // wishes list, etc.) get the scroll-internally-first treatment.
       if (overflow <= 48) return true;
 
       const atTop = page.scrollTop <= 15;
