@@ -267,26 +267,34 @@ section{ padding:var(--space-5) var(--space-2); position:relative; }
 }
 
 /* =========================================================================
-   PAGE SCROLL — normal, free-flowing scroll
+   PAGE SCROLL — full-viewport sections, normal free-flowing scroll
    -------------------------------------------------------------------------
    Previously this was a JS-driven "one swipe/scroll = one page" system
    with mandatory CSS scroll-snap on top. That combination was unreliable
    on mobile (gestures could get swallowed and leave the page stuck), so
    it's been replaced with plain document scrolling: #page-scroll is just
-   a normal block container, and each ".page" is a regular section with
-   no snap and no internal overflow trap. `html{scroll-behavior:smooth}`
-   (declared near the top of this file) already gives anchor links
-   (Add to Calendar, keyboard nav, etc.) a smooth glide.
-   Each ".page" keeps a fluid spacing scale (via dvh-based clamp()) so
-   paddings/gaps shrink a bit on short phone screens.
+   a normal block container. Each ".page" is still sized to exactly one
+   viewport tall — same idea as #intro-sequence/#cover (inset:0, fixed to
+   the viewport) — so scrolling still feels like moving through full
+   "cards", it's just the user's own natural scroll instead of a forced
+   page-turn. `html{scroll-behavior:smooth}` (declared near the top of
+   this file) already gives anchor links (Add to Calendar, keyboard nav,
+   etc.) a smooth glide between them.
+   Content is meant to shrink to fit one screen (fluid type/spacing via
+   dvh-based clamp()); `overflow-y:auto` on each section is only a safety
+   net for the rare case content still doesn't fit (a long wishes list, a
+   short landscape window) — it scrolls internally rather than being
+   clipped or breaking the "one screen" layout.
    ========================================================================= */
 #page-scroll{
   overflow-x:hidden;
 }
 
 .page{
-  min-height:100vh;
-  min-height:100dvh;
+  height:100vh;
+  height:100dvh;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
 
   /* Fluid spacing scale — shrinks padding/gaps on short screens.
      Every existing rule using var(--space-*) picks this up for free. */
@@ -311,10 +319,12 @@ section{ padding:var(--space-5) var(--space-2); position:relative; }
   padding-bottom:var(--space-4);
 }
 
-/* Landscape phones / short windows: don't force a full screen's worth
-   of empty space, just let content flow naturally. */
+/* Landscape phones / short windows: a fixed one-viewport height leaves
+   almost no room for content, so let those pages grow naturally and
+   just scroll through instead of trying to force everything into a
+   sliver of vertical space. */
 @media (max-height:480px){
-  .page{ min-height:auto; }
+  .page{ height:auto; min-height:100vh; min-height:100dvh; }
 }
 
 /* =========================================================================
@@ -623,9 +633,6 @@ section{ padding:var(--space-5) var(--space-2); position:relative; }
 #countdown {
   background:var(--navy-900);
   color:var(--ivory);
-  min-height:auto;
-  padding-top:var(--space-4);
-  padding-bottom:var(--space-4);
 }
 #countdown h2{ color:var(--ivory); }
 .countdown-grid{
@@ -688,7 +695,7 @@ section{ padding:var(--space-5) var(--space-2); position:relative; }
   border:1px solid var(--ivory-dim);
   box-shadow:0 16px 36px -20px rgba(12,28,51,0.3);
 }
-.map-frame-wrap iframe{ width:100%; height:280px; border:0; display:block; }
+.map-frame-wrap iframe{ width:100%; height:clamp(180px, 32dvh, 280px); border:0; display:block; }
 .venue-link{
   display:inline-flex;
   align-items:center;
@@ -916,7 +923,7 @@ section{ padding:var(--space-5) var(--space-2); position:relative; }
   flex-direction:column;
   gap:var(--space-2);
   text-align:left;
-  max-height:420px;
+  max-height:min(420px, 38dvh);
   overflow-y:auto;
   padding-right:4px;
 }
