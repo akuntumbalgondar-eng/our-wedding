@@ -357,8 +357,17 @@
     const scroller = document.getElementById("page-scroll");
     if (!scroller) return;
 
+    // #countdown is deliberately excluded here — it just scrolls
+    // through normally (native scroll, no snap-stop, no JS gating).
+    // It kept causing issues on Android where its borderline height
+    // vs. the address-bar-shifting viewport made the paging logic
+    // misjudge whether it still had room to scroll, so swipes got
+    // silently swallowed. It's simpler and more reliable as a plain
+    // scroll-through section between Couple and Events.
     const pages = Array.from(scroller.children).filter(
-      (el) => el.tagName === "HEADER" || el.tagName === "SECTION",
+      (el) =>
+        (el.tagName === "HEADER" || el.tagName === "SECTION") &&
+        el.id !== "countdown",
     );
     if (!pages.length) return;
 

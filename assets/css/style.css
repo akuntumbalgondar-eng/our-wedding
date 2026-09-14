@@ -642,6 +642,13 @@ body.locked #page-scroll{ overflow:hidden; }
 #countdown {
   background:var(--navy-900);
   color:var(--ivory);
+  /* Scrolls through normally — not a snap stop, not managed by
+     main.js's page-turn logic (see pageScroll() for why). */
+  scroll-snap-align:none;
+  scroll-snap-stop:normal;
+  min-height:auto;
+  padding-top:var(--space-4);
+  padding-bottom:var(--space-4);
 }
 #countdown h2{ color:var(--ivory); }
 .countdown-grid{
