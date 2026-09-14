@@ -267,45 +267,28 @@ section{ padding:var(--space-5) var(--space-2); position:relative; }
 }
 
 /* =========================================================================
-   PAGE SCROLL — full-page "book" paging
+   PAGE SCROLL — normal, free-flowing scroll
    -------------------------------------------------------------------------
-   #page-scroll is the scrollable region. The actual "one swipe/scroll =
-   one page" behaviour is driven from main.js (wheel + touch, with a
-   short lock during the transition) because relying on CSS scroll-snap
-   alone doesn't reliably guarantee a single notch/swipe lands exactly
-   one page over on every browser — CSS snap is kept here as a native
-   fallback/reinforcement, not the primary mechanism.
-   Each ".page" gets a fluid spacing scale (via dvh-based clamp()) so
-   paddings/gaps shrink on short phone screens automatically — the goal
-   is that content simply fits one screen rather than needing to be
-   clipped or internally scrolled. `overflow-y:auto` stays as a safety
-   net for the rare case a page still doesn't fit (e.g. very short
-   screen + large accessibility text): main.js checks that scroll
-   position before deciding whether a gesture should turn the page or
-   scroll within it.
+   Previously this was a JS-driven "one swipe/scroll = one page" system
+   with mandatory CSS scroll-snap on top. That combination was unreliable
+   on mobile (gestures could get swallowed and leave the page stuck), so
+   it's been replaced with plain document scrolling: #page-scroll is just
+   a normal block container, and each ".page" is a regular section with
+   no snap and no internal overflow trap. `html{scroll-behavior:smooth}`
+   (declared near the top of this file) already gives anchor links
+   (Add to Calendar, keyboard nav, etc.) a smooth glide.
+   Each ".page" keeps a fluid spacing scale (via dvh-based clamp()) so
+   paddings/gaps shrink a bit on short phone screens.
    ========================================================================= */
 #page-scroll{
-  height:100vh;
-  height:100dvh;
-  overflow-y:scroll;
   overflow-x:hidden;
-  scroll-snap-type:y mandatory;
-  scroll-behavior:smooth;
-  overscroll-behavior-y:contain;
-  -webkit-overflow-scrolling:touch;
 }
-body.locked #page-scroll{ overflow:hidden; }
 
 .page{
   min-height:100vh;
   min-height:100dvh;
-  scroll-snap-align:start;
-  scroll-snap-stop:always;
-  overflow-y:auto;
-  -webkit-overflow-scrolling:touch;
 
-  /* Fluid spacing scale for full-page mode — shrinks on short screens
-     (dvh-based) so a page's own content tends to fit one screen.
+  /* Fluid spacing scale — shrinks padding/gaps on short screens.
      Every existing rule using var(--space-*) picks this up for free. */
   --space-1:clamp(0.35rem, 1.2dvh, 0.5rem);
   --space-2:clamp(0.6rem, 2.2dvh, 1rem);
@@ -324,16 +307,14 @@ body.locked #page-scroll{ overflow:hidden; }
   flex-direction:column;
   justify-content:center;
   justify-content:safe center;
+  padding-top:var(--space-4);
+  padding-bottom:var(--space-4);
 }
 
 /* Landscape phones / short windows: don't force a full screen's worth
    of empty space, just let content flow naturally. */
 @media (max-height:480px){
   .page{ min-height:auto; }
-}
-
-@media (prefers-reduced-motion: reduce){
-  #page-scroll{ scroll-snap-type:none; }
 }
 
 /* =========================================================================
@@ -642,10 +623,6 @@ body.locked #page-scroll{ overflow:hidden; }
 #countdown {
   background:var(--navy-900);
   color:var(--ivory);
-  /* Scrolls through normally — not a snap stop, not managed by
-     main.js's page-turn logic (see pageScroll() for why). */
-  scroll-snap-align:none;
-  scroll-snap-stop:normal;
   min-height:auto;
   padding-top:var(--space-4);
   padding-bottom:var(--space-4);
